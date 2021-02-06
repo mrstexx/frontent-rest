@@ -1,5 +1,6 @@
 package com.frontent.app.auth.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -42,7 +43,29 @@ public class JwtProvider {
         try {
             return (PrivateKey) keyStore.getKey("frontent", "secure".toCharArray());
         } catch (KeyStoreException | NoSuchAlgorithmException | UnrecoverableKeyException e) {
+            throw new IllegalStateException("Exception occurred while retrieving private ket from keystore");
+        }
+    }
+
+    private PublicKey getPublicKey() {
+        try {
+            return keyStore.getCertificate("frontent").getPublicKey();
+        } catch (KeyStoreException e) {
             throw new IllegalStateException("Exception occurred while retrieving public ket from keystore");
         }
+    }
+
+    public boolean validateToken(String jwt) {
+        Jwts.parserBuilder().setSigningKey(getPublicKey()).build().parseClaimsJws(jwt);
+        return true;
+    }
+
+    public String getUsernameFromJwt(String token) {
+        Claims claims = Jwts.parserBuilder()
+                .setSigningKey(getPublicKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
     }
 }
