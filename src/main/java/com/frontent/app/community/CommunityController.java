@@ -19,9 +19,14 @@ public class CommunityController {
         return ResponseEntity.status(HttpStatus.CREATED).body(communityService.saveCommunity(community));
     }
 
-    @GetMapping
+    @GetMapping("/")
     public ResponseEntity<List<CommunityDto>> getAllCommunities() {
         return ResponseEntity.status(HttpStatus.OK).body(communityService.getAllCommunities());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CommunityDto> getCommunityById(@PathVariable("id") Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(communityService.getCommunityById(id));
     }
 
 }

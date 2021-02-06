@@ -28,6 +28,13 @@ public class CommunityService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public CommunityDto getCommunityById(Long id) {
+        Community community = communityRepository.findById(id)
+                .orElseThrow(() -> new IllegalStateException("No community found with the id: " + id));
+        return mapToDto(community);
+    }
+
     private CommunityDto mapToDto(Community community) {
         return CommunityDto.builder().name(community.getName())
                 .id(community.getId())
