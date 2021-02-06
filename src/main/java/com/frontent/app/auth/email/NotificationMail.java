@@ -1,4 +1,4 @@
-package com.postingg.app.auth.email;
+package com.frontent.app.auth.email;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

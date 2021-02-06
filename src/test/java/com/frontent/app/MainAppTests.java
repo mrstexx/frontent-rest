@@ -1,4 +1,4 @@
-package com.postingg.app;
+package com.frontent.app;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

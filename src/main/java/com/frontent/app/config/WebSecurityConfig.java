@@ -1,4 +1,4 @@
-package com.postingg.app.config;
+package com.frontent.app.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

@@ -6,7 +6,7 @@ server:
 spring:
   datasource:
     password: admin
-    url: jdbc:postgresql://localhost:5432/db_postingg
+    url: jdbc:postgresql://localhost:5432/db_frontent
     username: postgres
 
   jpa:
@@ -16,7 +16,6 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
-    show-sql: true
 
   mail:
     host: localhost

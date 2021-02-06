@@ -1,4 +1,4 @@
-package com.postingg.app.user;
+package com.frontent.app.user;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -61,7 +61,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return username;
     }
 
     @Override

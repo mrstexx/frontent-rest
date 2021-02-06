@@ -1,4 +1,4 @@
-package com.postingg.app.auth.email;
+package com.frontent.app.auth.email;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ public class MailService {
     public void sendMail(NotificationMail mail) {
         MimeMessagePreparator messagePrep = mimeMessage -> {
             MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, "utf-8");
-            messageHelper.setFrom("authentication@postingg.com");
+            messageHelper.setFrom("authentication@frontent.com");
             messageHelper.setTo(mail.getRecipient());
             messageHelper.setSubject(mail.getSubject());
             messageHelper.setText(mailContentBuilder.build(mail.getBody()));

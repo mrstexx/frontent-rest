@@ -1,12 +1,12 @@
-package com.postingg.app.auth;
+package com.frontent.app.auth;
 
-import com.postingg.app.auth.email.MailService;
-import com.postingg.app.auth.email.NotificationMail;
-import com.postingg.app.auth.token.ConfirmationToken;
-import com.postingg.app.auth.token.ConfirmationTokenRepository;
-import com.postingg.app.user.User;
-import com.postingg.app.user.UserRepository;
-import com.postingg.app.user.UserRole;
+import com.frontent.app.user.UserRepository;
+import com.frontent.app.user.UserRole;
+import com.frontent.app.auth.email.MailService;
+import com.frontent.app.auth.email.NotificationMail;
+import com.frontent.app.auth.token.ConfirmationToken;
+import com.frontent.app.auth.token.ConfirmationTokenRepository;
+import com.frontent.app.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -47,7 +47,7 @@ public class AuthService {
                 new NotificationMail(
                         "Please Activate your Account",
                         user.getEmail(),
-                        "Thank you for signing up to Postingg. Please click on the URL below to activate your account: " +
+                        "Thank you for signing up to Frontent. Please click on the URL below to activate your account: " +
                                 "http://localhost:8080/api/auth/confirm?token=" + token));
     }
 
@@ -75,6 +75,9 @@ public class AuthService {
             throw new IllegalStateException("Token expired");
         }
         confirmationTokenRepository.updateConfirmedAt(token, LocalDateTime.now());
-        userRepository.enableUser(confirmationToken.getUser().getUsername());
+        User user = userRepository.findByUsername(confirmationToken.getUser().getUsername())
+                .orElseThrow(() -> new IllegalStateException("User not found"));
+        user.setEnabled(true);
+        userRepository.save(user);
     }
 }

@@ -1,4 +1,4 @@
-package com.postingg.app.auth.token;
+package com.frontent.app.auth.token;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

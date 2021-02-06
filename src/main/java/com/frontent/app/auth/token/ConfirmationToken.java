@@ -1,6 +1,6 @@
-package com.postingg.app.auth.token;
+package com.frontent.app.auth.token;
 
-import com.postingg.app.user.User;
+import com.frontent.app.user.User;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
