@@ -1,13 +1,18 @@
 package com.frontent.app.auth;
 
-import com.frontent.app.user.UserRepository;
-import com.frontent.app.user.UserRole;
 import com.frontent.app.auth.email.MailService;
 import com.frontent.app.auth.email.NotificationMail;
+import com.frontent.app.auth.jwt.JwtProvider;
 import com.frontent.app.auth.token.ConfirmationToken;
 import com.frontent.app.auth.token.ConfirmationTokenRepository;
 import com.frontent.app.user.User;
+import com.frontent.app.user.UserRepository;
+import com.frontent.app.user.UserRole;
 import lombok.AllArgsConstructor;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final MailService mailService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtProvider jwtProvider;
 
     @Transactional
     public void signUp(RegisterRequest registerRequest) {
@@ -43,6 +50,7 @@ public class AuthService {
         String token = generateVerificationToken(user);
 
         // and send a token to confirm it via email
+        // TODO: hardcoded url...
         mailService.sendMail(
                 new NotificationMail(
                         "Please Activate your Account",
@@ -79,5 +87,13 @@ public class AuthService {
                 .orElseThrow(() -> new IllegalStateException("User not found"));
         user.setEnabled(true);
         userRepository.save(user);
+    }
+
+    public AuthResponse login(LoginRequest loginRequest) {
+        Authentication authenticate = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authenticate);
+        String token = jwtProvider.generateToken(authenticate);
+        return new AuthResponse(token, loginRequest.getUsername());
     }
 }
