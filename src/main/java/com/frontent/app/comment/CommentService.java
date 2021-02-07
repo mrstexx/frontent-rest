@@ -7,6 +7,7 @@ import com.frontent.app.user.User;
 import com.frontent.app.user.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +22,7 @@ public class CommentService {
 
     private final AuthService authService;
 
+    @Transactional
     public void createComment(CommentDto commentDto) {
         Post post = postRepository.findById(commentDto.getPostId())
                 .orElseThrow(() -> new IllegalStateException("No post found with id: " + commentDto.getPostId()));
@@ -29,11 +31,13 @@ public class CommentService {
         // TODO: send comment notification
     }
 
+    @Transactional(readOnly = true)
     public List<CommentDto> getAllCommentsByPostId(Long id) {
         Post post = postRepository.findById(id).orElseThrow(() -> new IllegalStateException("No post found with id: " + id));
         return commentRepository.findByPost(post).stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public List<CommentDto> getAllCommentsByUsername(String username) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalStateException("No user found with username: " + username));

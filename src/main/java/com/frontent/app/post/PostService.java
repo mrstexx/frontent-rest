@@ -1,6 +1,7 @@
 package com.frontent.app.post;
 
 import com.frontent.app.auth.AuthService;
+import com.frontent.app.comment.CommentRepository;
 import com.frontent.app.community.Community;
 import com.frontent.app.community.CommunityRepository;
 import com.frontent.app.user.User;
@@ -20,6 +21,8 @@ public class PostService {
     private final PostRepository postRepository;
     private final CommunityRepository communityRepository;
     private final UserRepository userRepository;
+    private final CommentRepository commentRepository;
+
     private final AuthService authService;
 
     public void savePost(PostRequest postRequest) {
@@ -63,6 +66,7 @@ public class PostService {
                 .url(postRequest.getUrl())
                 .createdAt(LocalDateTime.now())
                 .community(community)
+                .voteCount(0)
                 .user(user)
                 .build();
     }
@@ -71,6 +75,7 @@ public class PostService {
         if (post == null) {
             return null;
         }
+        // TODO: getCommunity might be null
         return PostResponse.builder()
                 .id(post.getId())
                 .username(post.getUser().getUsername())
@@ -78,6 +83,8 @@ public class PostService {
                 .postName(post.getName())
                 .url(post.getUrl())
                 .description(post.getDescription())
+                .createAt(post.getCreatedAt())
+                .commentCount(commentRepository.findByPost(post).size())
                 .build();
     }
 }
