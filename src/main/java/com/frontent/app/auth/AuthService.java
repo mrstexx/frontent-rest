@@ -5,6 +5,8 @@ import com.frontent.app.auth.email.NotificationMail;
 import com.frontent.app.auth.jwt.JwtProvider;
 import com.frontent.app.auth.token.ConfirmationToken;
 import com.frontent.app.auth.token.ConfirmationTokenRepository;
+import com.frontent.app.auth.token.RefreshTokenRequest;
+import com.frontent.app.auth.token.RefreshTokenService;
 import com.frontent.app.user.User;
 import com.frontent.app.user.UserRepository;
 import com.frontent.app.user.UserRole;
@@ -17,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -30,6 +33,7 @@ public class AuthService {
     private final MailService mailService;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public void signUp(RegisterRequest registerRequest) {
@@ -59,6 +63,7 @@ public class AuthService {
                                 "http://localhost:8080/api/auth/confirm?token=" + token));
     }
 
+    // TODO: move to own service class
     private String generateVerificationToken(User user) {
         String verificationToken = UUID.randomUUID().toString();
         // TODO: Read from config file minutes
@@ -102,6 +107,23 @@ public class AuthService {
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authenticate);
         String token = jwtProvider.generateToken(authenticate);
-        return new AuthResponse(token, loginRequest.getUsername());
+        return AuthResponse.builder()
+                .authToken(token)
+                .refreshToken(refreshTokenService.generateRefreshToken().getToken())
+                .username(loginRequest.getUsername())
+                .refreshToken("")
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .build();
+    }
+
+    public AuthResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String token = jwtProvider.generateTokenWithUsername(refreshTokenRequest.getUsername());
+        return AuthResponse.builder()
+                .authToken(token)
+                .refreshToken(refreshTokenRequest.getRefreshToken())
+                .expiresAt(Instant.now().plusMillis(jwtProvider.getJwtExpirationInMillis()))
+                .username(refreshTokenRequest.getUsername())
+                .build();
     }
 }

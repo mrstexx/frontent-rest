@@ -1,19 +1,16 @@
-package com.frontent.app.auth;
+package com.frontent.app.auth.token;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class AuthResponse {
-    private String authToken;
+public class RefreshTokenRequest {
+    @NotBlank
     private String refreshToken;
     private String username;
-    private Instant expiresAt;
 }

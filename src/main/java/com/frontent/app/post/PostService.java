@@ -76,6 +76,7 @@ public class PostService {
             return null;
         }
         // TODO: getCommunity might be null
+        // TODO: Transactional readOnly?
         return PostResponse.builder()
                 .id(post.getId())
                 .username(post.getUser().getUsername())
